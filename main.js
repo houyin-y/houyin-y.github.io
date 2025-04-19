@@ -72,7 +72,7 @@ angular.module('GuessingGameApp', [])
                 $scope.guessedCorrectly = true;
             }
 
-            if ($scope.attempts > 5 && !$scope.guessedCorrectly && ($scope.targetNumber - guess < 10)) {
+            if ($scope.attempts > 5 && !$scope.guessedCorrectly && (Math.abs($scope.targetNumber - guess) < 10)) {
                 $scope.feedback = $scope.feedback.substring(0, $scope.feedback.length-1) + ", but you're getting close!! 😆";
             }
         };
