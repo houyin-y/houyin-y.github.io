@@ -38,7 +38,7 @@
                 <form ng-submit="checkGuess()">
                     <!-- user input -->
                     <div class="mb-3">
-                        <input type="text" class="form-control" ng-class="{idle: isIdle}" 
+                        <input type="number" min="1" max="100" class="form-control" ng-class="{idle: isIdle}" 
                             ng-model="guess" ng-focus="resetIdleTimer()" ng-keypress="resetIdleTimer()" 
                             required placeholder="Enter your guess">
                     </div>
