@@ -62,11 +62,13 @@ angular.module('GuessingGameApp', [])
             if (guess < $scope.targetNumber) {
                 let index = $scope.previousGuessTooHigh ? 0 : $scope.attempts -1;
                 $scope.feedback = lowFeedbacks[(index) % lowFeedbacks.length];
+                $scope.previousGuessTooHigh = false;
 
             } else if (guess > $scope.targetNumber) {
                 let index = $scope.previousGuessTooHigh ? $scope.attempts - 1 : 0;
                 $scope.feedback = highFeedbacks[(index) % highFeedbacks.length];
-                
+                $scope.previousGuessTooHigh = true;
+
             } else {
                 $scope.feedback = `Correct! You guessed it in ${$scope.attempts} attempts.`;
                 $scope.guessedCorrectly = true;
