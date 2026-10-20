@@ -1,256 +1,330 @@
-* {
-    box-sizing: border-box;
-}
+/* ==========================================================================
+   Paper Craft Weekly Timetable — custom styles
+   ========================================================================== */
 
+/* Paper Texture & Sketch Elements */
 body {
-    font-family: 'Poppins', sans-serif;
-    background: radial-gradient(circle at center, #1e284a 0%, #0d1222 100%);
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px;
+  background-color: #f2eee3;
+  background-image:
+    radial-gradient(#cfc3b3 0.75px, transparent 0.75px),
+    radial-gradient(#cfc3b3 0.75px, #f2eee3 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+  color: #2c2520;
+  font-family: 'Fredoka', sans-serif;
 }
 
-.calculator-card {
-    position: relative;
-    background: linear-gradient(145deg, #18223d, #12192e);
-    padding: 35px 30px;
-    border-radius: 18px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 195, 255, 0.15);
-    border: 2px solid #283763;
-    width: 100%;
-    max-width: 420px;
+/* Prevent background scrolling while the edit dialog is open */
+body.modal-open {
+  overflow: hidden;
 }
 
-.card-header {
-    position: relative;
-    text-align: center;
-    margin-bottom: 25px;
+#editModal[hidden] {
+  display: none !important;
 }
 
-.crown-icon {
-    font-size: 2.2em;
-    display: block;
-    margin-bottom: 5px;
+/* Sketch Border Effect */
+.sketch-border {
+  border: 2px solid #2d2621;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  box-shadow: 3px 4px 0px rgba(45, 38, 33, 0.85);
 }
 
-.history-toggle-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: auto;
-    padding: 6px 10px;
-    margin: 0;
-    background: #0c1324;
-    border: 1px solid #283763;
-    border-radius: 8px;
-    font-size: 1.1em;
-    cursor: pointer;
-    box-shadow: none;
-    transition: border-color 0.2s;
+.sketch-border-sm {
+  border: 2px solid #2d2621;
+  border-radius: 12px 2px 10px 3px/3px 10px 2px 12px;
+  box-shadow: 2px 3px 0px rgba(45, 38, 33, 0.85);
 }
 
-.history-toggle-btn:hover {
-    border-color: #00c3ff;
-    transform: none;
-    box-shadow: 0 0 8px rgba(0, 195, 255, 0.3);
+.sketch-button {
+  border: 2px solid #2d2621;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  box-shadow: 3px 4px 0px #2d2621;
+  transition: all 0.15s ease-out;
 }
 
-h2 {
-    font-weight: 800;
-    font-size: 1.3em;
-    letter-spacing: 1px;
-    color: #ffcc00;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    margin: 0;
+.sketch-button:hover {
+  transform: translate(-1px, -2px);
+  box-shadow: 4px 6px 0px #2d2621;
 }
 
-.form-group {
-    margin-bottom: 20px;
+.sketch-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #2d2621;
 }
 
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.8em;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    color: #8fa0cf;
+/* Dot Grid Background for Schedule Cells */
+.paper-grid-bg {
+  background-color: #fbf9f3;
+  background-image: radial-gradient(#d3c9b9 1px, transparent 1px);
+  background-size: 16px 16px;
 }
 
-.select-wrapper {
-    position: relative;
-    width: 100%;
+/* Sticky Note Styling & Colors */
+.sticky-note {
+  border: 2px solid #2d2621;
+  border-radius: 2px 10px 3px 8px / 8px 3px 10px 2px;
+  box-shadow: 3px 4px 0px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  cursor: grab;
+  position: relative;
+  touch-action: none;
 }
 
-.select-wrapper::after {
-    content: "▼";
-    font-size: 0.7em;
-    color: #00c3ff;
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
+.sticky-note:active {
+  cursor: grabbing;
 }
 
-select, input {
-    width: 100%;
-    padding: 12px 16px;
-    border-radius: 10px;
-    border: 1px solid #283763;
-    background-color: #0c1324;
-    color: #ffffff;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.95em;
-    outline: none;
-    transition: all 0.2s ease;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+.sticky-note:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
 }
 
-select {
-    padding-right: 40px;
-    cursor: pointer;
+.sketch-button:focus-visible,
+.edit-btn:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 3px solid #2563eb !important;
+  outline-offset: 2px;
 }
 
-select:focus, input:focus {
-    border-color: #00c3ff;
-    box-shadow: 0 0 8px rgba(0, 195, 255, 0.4);
+.sticky-yellow { background-color: #fff4a3; }
+.sticky-pink   { background-color: #ffb7c5; }
+.sticky-blue   { background-color: #b3e5fc; }
+.sticky-mint   { background-color: #b9f6ca; }
+.sticky-purple { background-color: #e1bee7; }
+.sticky-orange { background-color: #ffe0b2; }
+
+/* Notes placed on the timetable are absolutely positioned so that
+   overlapping events can share a time cell in separate vertical lanes. */
+.grid-note {
+  position: absolute;
+  left: 0;
+  z-index: 10;
 }
 
-button {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(180deg, #ffcc00 0%, #e69d00 100%);
-    border: none;
-    border-radius: 10px;
-    color: #0d1222;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    font-size: 1em;
-    letter-spacing: 1px;
-    cursor: pointer;
-    margin-top: 10px;
-    box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+/* Washi Tape Effect */
+.washi-tape {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1deg);
+  width: 48px;
+  height: 14px;
+  background-color: rgba(255, 255, 255, 0.55);
+  border: 1px dashed rgba(60, 50, 40, 0.4);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  z-index: 10;
+  pointer-events: none;
 }
 
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(255, 204, 0, 0.4);
+/* Dragging States */
+.sticky-note.is-dragging {
+  opacity: 0.4;
+  transform: scale(1.02) rotate(-1deg);
+  box-shadow: 10px 14px 15px rgba(0, 0, 0, 0.22);
 }
 
-button:active {
-    transform: translateY(0);
+/* Floating clone used while dragging with touch/pen input */
+.drag-ghost {
+  position: fixed !important;
+  margin: 0;
+  pointer-events: none;
+  opacity: 0.92;
+  z-index: 10000;
+  transform: rotate(-2deg) scale(1.03);
+  box-shadow: 10px 14px 15px rgba(0, 0, 0, 0.28);
+  cursor: grabbing;
 }
 
-.result-box {
-    margin-top: 25px;
-    padding: 18px;
-    background-color: #0c1324;
-    border-radius: 12px;
-    border: 1px solid #00c3ff;
-    box-shadow: inset 0 0 10px rgba(0, 195, 255, 0.1);
-    display: none;
+.drop-target-hover {
+  background-color: rgba(185, 246, 202, 0.45) !important;
+  outline: 2px dashed #2d2621;
+  outline-offset: -3px;
 }
 
-.card-title-result {
-    text-align: center;
-    font-size: 0.9em;
-    font-weight: 700;
-    color: #8fa0cf;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
+.drop-target-danger {
+  background-color: #fecdd3 !important;
+  outline: 2px dashed #9f1239;
+  outline-offset: -3px;
 }
 
-.result-title {
-    font-size: 1.15em;
-    font-weight: 700;
-    color: #00ffcc;
-    text-align: center;
+/* Snap Drop Keyframe Animation */
+@keyframes dropBounce {
+  0%   { transform: scale(1.12) rotate(-2deg); }
+  50%  { transform: scale(0.96) rotate(1deg); }
+  75%  { transform: scale(1.02) rotate(-0.5deg); }
+  100% { transform: scale(1) rotate(0deg); }
 }
 
-.result-divider {
-    height: 1px;
-    background-color: #283763;
-    margin: 12px 0;
+.just-dropped {
+  animation: dropBounce 0.35s ease-out forwards;
 }
 
-.result-detail {
-    font-size: 0.88em;
-    color: #cbd5e1;
-    margin: 6px 0;
+/* Responsive Grid Layout Rules */
+/* Desktop (Horizontal 24h scroll across 7 days) */
+.desktop-layout .grid-container {
+  display: grid;
+  grid-template-columns: 90px repeat(24, minmax(110px, 1fr));
+  grid-template-rows: 45px repeat(7, minmax(85px, 1fr));
 }
 
-/* History Drawer Styling */
-.history-panel {
-    display: none;
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #0c1324;
-    border: 1px solid #283763;
-    border-radius: 12px;
+/* Mobile Option C (Axis Flip - Days Stacked, 24h Horizontal Scroll) */
+.mobile-layout .grid-container {
+  display: grid;
+  grid-template-columns: 80px repeat(24, minmax(90px, 1fr));
+  grid-template-rows: 40px repeat(7, minmax(90px, 1fr));
 }
 
-.history-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.75em;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    color: #8fa0cf;
-    margin-bottom: 10px;
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #eadaa6;
+  border-radius: 5px;
+  border: 1px solid #2d2621;
+}
+::-webkit-scrollbar-thumb {
+  background: #c2b193;
+  border-radius: 5px;
+  border: 1px solid #2d2621;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a89678;
 }
 
-.clear-btn {
-    width: auto;
-    padding: 3px 8px;
-    margin: 0;
-    font-size: 0.85em;
-    background: #ff4d4d;
-    color: #fff;
-    border-radius: 6px;
-    box-shadow: none;
+/* Toast notifications */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: max-content;
+  max-width: min(90vw, 30rem);
+  padding: 0.65rem 1rem;
+  border: 2px solid #2d2621;
+  border-radius: 12px 2px 10px 3px/3px 10px 2px 12px;
+  box-shadow: 3px 4px 0 rgba(45, 38, 33, 0.85);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  text-align: center;
 }
 
-.clear-btn:hover {
-    background: #cc0000;
-    box-shadow: none;
-    transform: none;
+#toast[hidden] {
+  display: none !important;
 }
 
-.history-list {
-    max-height: 160px;
-    overflow-y: auto;
+#toast.toast-success {
+  background-color: #b9f6ca;
+  color: #173d27;
 }
 
-.history-item {
-    font-size: 0.82em;
-    padding: 8px 10px;
-    border-bottom: 1px solid #1a2542;
-    color: #cbd5e1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+#toast.toast-error {
+  background-color: #ffb7c5;
+  color: #561321;
 }
 
-.history-item:last-child {
-    border-bottom: none;
+/* Print View Rules */
+@page {
+  size: A4 landscape;
 }
 
-.history-item span.highlight {
-    color: #ffcc00;
-    font-weight: 600;
+@media print {
+  .no-print { display: none !important; }
+  body {
+    background: white !important;
+    color: #000;
+    font-size: 10pt;
+    padding: 0 !important;
+  }
+
+  .sketch-border,
+  .sketch-border-sm {
+    box-shadow: none !important;
+  }
+
+  .timetable-scroll-wrapper {
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  /* Fit all 24 hours on the printed page instead of clipping the grid. */
+  .desktop-layout .grid-container,
+  .mobile-layout .grid-container {
+    grid-template-columns: 32px repeat(24, minmax(0, 1fr)) !important;
+    grid-template-rows: 24px repeat(7, minmax(72px, 1fr)) !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .grid-container > div {
+    font-size: 7pt;
+    padding: 1px;
+  }
+
+  .timetable-slot {
+    min-height: 0 !important;
+  }
+
+  .grid-note {
+    box-shadow: none !important;
+    border-width: 1px !important;
+  }
+
+  .sticky-note {
+    font-size: 7pt;
+    padding: 2px !important;
+  }
+
+  .sticky-note .font-hand {
+    font-size: 7pt !important;
+  }
+
+  .note-meta {
+    font-size: 6pt !important;
+  }
+
+  .washi-tape,
+  .edit-btn,
+  #toast,
+  .animate-ping {
+    display: none !important;
+  }
+
+  main {
+    display: block !important;
+  }
+
+  main > section {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  body,
+  main,
+  main > section {
+    min-height: 0 !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
 
-.history-card-name {
-    font-weight: 700;
-    color: #ffffff;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clash Royale Level Calculator</title>
+    
+    <link href="/resources/favicon.ico" rel="icon" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="calculator-card">
+    <header class="card-header">
+        <span class="crown-icon">👑</span>
+        <h2>CARD LEVEL CALCULATOR</h2>
+        <button id="historyToggleBtn" class="history-toggle-btn" onclick="toggleHistory()" title="Saved Calculations">📜</button>
+    </header>
+    
+    <div class="form-group">
+        <label for="cardName">CARD NAME (OPTIONAL)</label>
+        <input type="text" id="cardName" placeholder="e.g. Pekka, Zap, Miner...">
+    </div>
+
+    <div class="form-group">
+        <label for="rarity">CARD RARITY</label>
+        <div class="select-wrapper">
+            <select id="rarity" onchange="updateLevelOptions()">
+                <option value="common">Common</option>
+                <option value="rare">Rare</option>
+                <option value="epic">Epic</option>
+                <option value="legendary">Legendary</option>
+                <option value="champion">Champion</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="currentLevel">CURRENT LEVEL</label>
+        <div class="select-wrapper">
+            <select id="currentLevel">
+                <!-- Populated via JavaScript -->
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="cardAmount">EXTRA CARDS AVAILABLE</label>
+        <input type="number" id="cardAmount" min="0" placeholder="e.g. 2500" value="0">
+    </div>
+
+    <button onclick="calculateMaxLevel()">CALCULATE</button>
+
+    <div id="result" class="result-box">
+        <div id="cardTitleResult" class="card-title-result"></div>
+        <div id="maxLevelResult" class="result-title"></div>
+        <div class="result-divider"></div>
+        <div id="leftoverResult" class="result-detail"></div>
+        <div id="nextLevelResult" class="result-detail"></div>
+    </div>
+
+    <!-- History Panel -->
+    <div id="historyPanel" class="history-panel">
+        <div class="history-header">
+            <span>BATTLE LOG HISTORY</span>
+            <button class="clear-btn" onclick="clearHistory()">Clear</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

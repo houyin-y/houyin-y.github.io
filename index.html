@@ -1,77 +1,353 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clash Royale Level Calculator</title>
-    
-    <link href="/resources/favicon.ico" rel="icon" type="image/x-icon">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An interactive paper-craft weekly timetable with drag-and-drop sticky notes.">
+  <title>Paper Craft Weekly Timetable</title>
+
+  <!-- Google Fonts for Hand-drawn Paper Prototype Aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Fredoka:wght@400;500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons for UI actions -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Tailwind CSS Framework CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: {
+              bg: '#f7f4ed',
+              card: '#fffdf8',
+              border: '#332e29',
+              grid: '#e2dad0',
+              line: '#d6cdbd'
+            },
+            sticky: {
+              yellow: '#fff4a3',
+              pink: '#ffb7c5',
+              blue: '#b3e5fc',
+              mint: '#b9f6ca',
+              purple: '#e1bee7',
+              orange: '#ffe0b2'
+            }
+          },
+          fontFamily: {
+            hand: ['"Patrick Hand"', 'cursive'],
+            sketch: ['"Architects Daughter"', 'cursive'],
+            sans: ['Fredoka', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body>
 
-<div class="calculator-card">
-    <header class="card-header">
-        <span class="crown-icon">👑</span>
-        <h2>CARD LEVEL CALCULATOR</h2>
-        <button id="historyToggleBtn" class="history-toggle-btn" onclick="toggleHistory()" title="Saved Calculations">📜</button>
-    </header>
-    
-    <div class="form-group">
-        <label for="cardName">CARD NAME (OPTIONAL)</label>
-        <input type="text" id="cardName" placeholder="e.g. Pekka, Zap, Miner...">
+<body class="min-h-screen flex flex-col p-2 sm:p-4 md:p-6 antialiased">
+
+  <!-- Header Section -->
+  <header class="max-w-7xl w-full mx-auto mb-4 bg-paper-card p-4 sm:p-5 sketch-border relative no-print flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="washi-tape"></div>
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-sticky-yellow sketch-border-sm flex items-center justify-center transform -rotate-3 text-2xl" aria-hidden="true">
+        📅
+      </div>
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-sketch font-bold tracking-wide text-gray-900">
+          My Weekly Paper Planner
+        </h1>
+        <p class="text-sm font-hand text-gray-700 -mt-1">
+          Interactive Drag &amp; Drop Student Timetable
+        </p>
+      </div>
     </div>
 
-    <div class="form-group">
-        <label for="rarity">CARD RARITY</label>
-        <div class="select-wrapper">
-            <select id="rarity" onchange="updateLevelOptions()">
-                <option value="common">Common</option>
-                <option value="rare">Rare</option>
-                <option value="epic">Epic</option>
-                <option value="legendary">Legendary</option>
-                <option value="champion">Champion</option>
+    <!-- Header Quick Actions & Layout Toggle -->
+    <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+      <!-- Layout Force Toggle -->
+      <button type="button" id="toggleLayoutBtn" class="sketch-button bg-amber-100 hover:bg-amber-200 px-3 py-1.5 text-xs sm:text-sm font-semibold flex items-center gap-1.5">
+        <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i>
+        <span id="layoutToggleLabel">View: Auto Responsive</span>
+      </button>
+
+      <!-- Category Filter -->
+      <div class="relative">
+        <select id="categoryFilter" aria-label="Filter notes by category" class="sketch-border-sm bg-white px-3 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer outline-none">
+          <option value="ALL">All Categories</option>
+          <option value="Class">📚 Class</option>
+          <option value="Study">✏️ Study</option>
+          <option value="Work">💼 Work</option>
+          <option value="Fitness">🏋️ Fitness</option>
+          <option value="Personal">🌿 Personal</option>
+        </select>
+      </div>
+
+      <!-- Action Buttons -->
+      <button type="button" id="clearAllBtn" title="Clear grid" class="sketch-button bg-rose-100 hover:bg-rose-200 px-3 py-1.5 text-xs sm:text-sm font-semibold">
+        <i class="fa-solid fa-trash-can mr-1" aria-hidden="true"></i> Clear
+      </button>
+
+      <button type="button" id="printBtn" title="Print timetable" class="sketch-button bg-emerald-100 hover:bg-emerald-200 px-3 py-1.5 text-xs sm:text-sm font-semibold">
+        <i class="fa-solid fa-print mr-1" aria-hidden="true"></i> Print
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Grid -->
+  <main class="max-w-7xl w-full mx-auto flex-1 flex flex-col lg:flex-row gap-5 items-start">
+
+    <!-- LEFT SIDEBAR: Sticky Note Creator & Scratchpad Palette -->
+    <aside class="w-full lg:w-80 flex-shrink-0 flex flex-col gap-5 no-print">
+
+      <!-- Creator Form Card -->
+      <div class="bg-paper-card p-5 sketch-border relative">
+        <div class="washi-tape"></div>
+        <h2 class="text-xl font-sketch font-bold mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-pen-ruler text-amber-700" aria-hidden="true"></i> Create Sticky Note
+        </h2>
+
+        <form id="createNoteForm" class="flex flex-col gap-3 text-sm">
+          <!-- Title -->
+          <div>
+            <label for="noteTitle" class="block font-semibold mb-1 text-xs uppercase tracking-wider text-gray-700">Activity Title</label>
+            <input type="text" id="noteTitle" placeholder="e.g. Calculus Lecture" required maxlength="80"
+                   class="w-full sketch-border-sm bg-white p-2 font-hand text-lg focus:outline-none focus:ring-2 focus:ring-amber-400">
+          </div>
+
+          <!-- Day Selection -->
+          <div>
+            <label for="noteDay" class="block font-semibold mb-1 text-xs uppercase tracking-wider text-gray-700">Day</label>
+            <select id="noteDay" class="w-full sketch-border-sm bg-white p-2 text-sm font-semibold cursor-pointer outline-none">
+              <option value="0">Monday</option>
+              <option value="1">Tuesday</option>
+              <option value="2">Wednesday</option>
+              <option value="3">Thursday</option>
+              <option value="4">Friday</option>
+              <option value="5">Saturday</option>
+              <option value="6">Sunday</option>
             </select>
-        </div>
-    </div>
+          </div>
 
-    <div class="form-group">
-        <label for="currentLevel">CURRENT LEVEL</label>
-        <div class="select-wrapper">
-            <select id="currentLevel">
-                <!-- Populated via JavaScript -->
+          <!-- Time Range -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="noteStart" class="block font-semibold mb-1 text-xs uppercase tracking-wider text-gray-700">Start Time</label>
+              <select id="noteStart" class="w-full sketch-border-sm bg-white p-2 text-xs font-semibold cursor-pointer outline-none">
+                <!-- JS Populated 00:00 - 23:00 -->
+              </select>
+            </div>
+            <div>
+              <label for="noteDuration" class="block font-semibold mb-1 text-xs uppercase tracking-wider text-gray-700">Duration (Hrs)</label>
+              <select id="noteDuration" class="w-full sketch-border-sm bg-white p-2 text-xs font-semibold cursor-pointer outline-none">
+                <option value="1">1 Hour</option>
+                <option value="2">2 Hours</option>
+                <option value="3">3 Hours</option>
+                <option value="4">4 Hours</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Category -->
+          <div>
+            <label for="noteCategory" class="block font-semibold mb-1 text-xs uppercase tracking-wider text-gray-700">Category</label>
+            <select id="noteCategory" class="w-full sketch-border-sm bg-white p-2 text-xs font-semibold cursor-pointer outline-none">
+              <option value="Class">📚 Class</option>
+              <option value="Study">✏️ Study</option>
+              <option value="Work">💼 Work</option>
+              <option value="Fitness">🏋️ Fitness</option>
+              <option value="Personal">🌿 Personal</option>
             </select>
+          </div>
+
+          <!-- Color Selector -->
+          <div>
+            <span id="noteColorLabel" class="block font-semibold mb-1 text-xs uppercase tracking-wider text-gray-700">Sticky Color</span>
+            <div class="flex items-center justify-between gap-1 pt-1" role="radiogroup" aria-labelledby="noteColorLabel">
+              <label class="cursor-pointer" title="Yellow">
+                <input type="radio" name="noteColor" value="yellow" checked class="peer sr-only" aria-label="Yellow">
+                <span class="block w-7 h-7 rounded-full bg-sticky-yellow sketch-border-sm peer-checked:ring-2 peer-checked:ring-black peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500"></span>
+              </label>
+              <label class="cursor-pointer" title="Pink">
+                <input type="radio" name="noteColor" value="pink" class="peer sr-only" aria-label="Pink">
+                <span class="block w-7 h-7 rounded-full bg-sticky-pink sketch-border-sm peer-checked:ring-2 peer-checked:ring-black peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500"></span>
+              </label>
+              <label class="cursor-pointer" title="Blue">
+                <input type="radio" name="noteColor" value="blue" class="peer sr-only" aria-label="Blue">
+                <span class="block w-7 h-7 rounded-full bg-sticky-blue sketch-border-sm peer-checked:ring-2 peer-checked:ring-black peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500"></span>
+              </label>
+              <label class="cursor-pointer" title="Mint">
+                <input type="radio" name="noteColor" value="mint" class="peer sr-only" aria-label="Mint">
+                <span class="block w-7 h-7 rounded-full bg-sticky-mint sketch-border-sm peer-checked:ring-2 peer-checked:ring-black peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500"></span>
+              </label>
+              <label class="cursor-pointer" title="Purple">
+                <input type="radio" name="noteColor" value="purple" class="peer sr-only" aria-label="Purple">
+                <span class="block w-7 h-7 rounded-full bg-sticky-purple sketch-border-sm peer-checked:ring-2 peer-checked:ring-black peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500"></span>
+              </label>
+              <label class="cursor-pointer" title="Orange">
+                <input type="radio" name="noteColor" value="orange" class="peer sr-only" aria-label="Orange">
+                <span class="block w-7 h-7 rounded-full bg-sticky-orange sketch-border-sm peer-checked:ring-2 peer-checked:ring-black peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="mt-2 sketch-button bg-amber-200 hover:bg-amber-300 py-2 font-sketch font-bold text-lg flex items-center justify-center gap-2">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i> Add to Timetable
+          </button>
+        </form>
+      </div>
+
+      <!-- Unassigned Scratchpad Palette -->
+      <div class="bg-paper-card p-4 sketch-border relative flex flex-col min-h-[160px]">
+        <div class="washi-tape"></div>
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="font-sketch font-bold text-lg flex items-center gap-1.5">
+            <i class="fa-solid fa-box-archive text-amber-800" aria-hidden="true"></i> Scratchpad
+          </h3>
+          <span class="text-xs font-semibold px-2 py-0.5 bg-amber-100 rounded-full border border-amber-900" id="scratchCount" aria-live="polite">0 items</span>
         </div>
-    </div>
+        <p class="text-gray-600 mb-3 font-hand text-sm">Drag unused notes here to keep them handy for later!</p>
 
-    <div class="form-group">
-        <label for="cardAmount">EXTRA CARDS AVAILABLE</label>
-        <input type="number" id="cardAmount" min="0" placeholder="e.g. 2500" value="0">
-    </div>
-
-    <button onclick="calculateMaxLevel()">CALCULATE</button>
-
-    <div id="result" class="result-box">
-        <div id="cardTitleResult" class="card-title-result"></div>
-        <div id="maxLevelResult" class="result-title"></div>
-        <div class="result-divider"></div>
-        <div id="leftoverResult" class="result-detail"></div>
-        <div id="nextLevelResult" class="result-detail"></div>
-    </div>
-
-    <!-- History Panel -->
-    <div id="historyPanel" class="history-panel">
-        <div class="history-header">
-            <span>BATTLE LOG HISTORY</span>
-            <button class="clear-btn" onclick="clearHistory()">Clear</button>
+        <div id="scratchpadArea" class="flex-1 paper-grid-bg sketch-border-sm p-3 flex flex-wrap gap-2 items-start justify-start min-h-[90px] transition-colors">
+          <!-- Unassigned Sticky Notes append here -->
         </div>
-        <div id="historyList" class="history-list"></div>
-    </div>
-</div>
+      </div>
 
-<script src="script.js"></script>
+      <!-- Trash Bin Drop Zone -->
+      <div id="trashZone" class="sketch-border-sm bg-rose-50 hover:bg-rose-100 p-4 flex items-center justify-center gap-3 border-2 border-dashed border-rose-800 text-rose-800 transition-all cursor-pointer">
+        <i class="fa-solid fa-trash-can text-2xl" aria-hidden="true"></i>
+        <span class="font-sketch font-bold text-base">Drag Note Here to Delete</span>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT TIMETABLE GRID CANVAS -->
+    <section class="flex-1 w-full bg-paper-card p-3 sm:p-5 sketch-border relative overflow-hidden flex flex-col">
+      <div class="washi-tape"></div>
+
+      <!-- Board Sub-header with Today Indicator -->
+      <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b-2 border-paper-line gap-2">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping" aria-hidden="true"></span>
+          <span class="font-sketch font-bold text-lg text-gray-800" id="currentDayNotice">
+            Weekly Schedule Overview
+          </span>
+        </div>
+        <div class="text-xs font-hand text-gray-600 flex items-center gap-3 no-print">
+          <span><i class="fa-solid fa-hand-pointer" aria-hidden="true"></i> Drag blocks to move</span>
+          <span><i class="fa-solid fa-keyboard" aria-hidden="true"></i> Enter to edit</span>
+        </div>
+      </div>
+
+      <!-- Scrollable Grid Wrapper -->
+      <div id="timetableScrollWrapper" class="timetable-scroll-wrapper overflow-x-auto overflow-y-auto paper-grid-bg sketch-border-sm p-1 relative">
+
+        <div id="gridContainer" class="grid-container relative min-w-max">
+          <!-- Timetable header and cells generated by JS -->
+        </div>
+
+      </div>
+
+      <!-- Footer Note -->
+      <div class="mt-3 text-right text-xs font-hand text-gray-500 no-print">
+        ✨ Auto-saved locally in your browser
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Edit Modal Window -->
+  <div id="editModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 no-print" role="dialog" aria-modal="true" aria-labelledby="editModalTitle" hidden>
+    <div class="bg-paper-card sketch-border p-6 max-w-sm w-full max-h-[90vh] overflow-y-auto relative">
+      <div class="washi-tape"></div>
+      <h3 id="editModalTitle" class="font-sketch font-bold text-xl mb-4 text-center">Edit Sticky Note</h3>
+
+      <div class="flex flex-col gap-3 text-sm">
+        <input type="hidden" id="editNoteId">
+        <div>
+          <label for="editNoteTitle" class="block font-semibold mb-1 text-xs uppercase text-gray-700">Title</label>
+          <input type="text" id="editNoteTitle" maxlength="80" class="w-full sketch-border-sm bg-white p-2 font-hand text-lg focus:outline-none">
+        </div>
+        <div>
+          <label for="editNoteCategory" class="block font-semibold mb-1 text-xs uppercase text-gray-700">Category</label>
+          <select id="editNoteCategory" class="w-full sketch-border-sm bg-white p-2 font-semibold">
+            <option value="Class">📚 Class</option>
+            <option value="Study">✏️ Study</option>
+            <option value="Work">💼 Work</option>
+            <option value="Fitness">🏋️ Fitness</option>
+            <option value="Personal">🌿 Personal</option>
+          </select>
+        </div>
+        <div>
+          <label for="editNoteColor" class="block font-semibold mb-1 text-xs uppercase text-gray-700">Color</label>
+          <select id="editNoteColor" class="w-full sketch-border-sm bg-white p-2 font-semibold">
+            <option value="yellow">Yellow</option>
+            <option value="pink">Pink</option>
+            <option value="blue">Blue</option>
+            <option value="mint">Mint</option>
+            <option value="purple">Purple</option>
+            <option value="orange">Orange</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label for="editNoteDay" class="block font-semibold mb-1 text-xs uppercase text-gray-700">Day</label>
+            <select id="editNoteDay" class="w-full sketch-border-sm bg-white p-2 font-semibold">
+              <option value="0">Monday</option>
+              <option value="1">Tuesday</option>
+              <option value="2">Wednesday</option>
+              <option value="3">Thursday</option>
+              <option value="4">Friday</option>
+              <option value="5">Saturday</option>
+              <option value="6">Sunday</option>
+              <option value="scratch">Scratchpad</option>
+            </select>
+          </div>
+          <div>
+            <label for="editNoteStart" class="block font-semibold mb-1 text-xs uppercase text-gray-700">Start Time</label>
+            <select id="editNoteStart" class="w-full sketch-border-sm bg-white p-2 font-semibold"></select>
+          </div>
+        </div>
+
+        <div>
+          <label for="editNoteDuration" class="block font-semibold mb-1 text-xs uppercase text-gray-700">Duration (Hrs)</label>
+          <select id="editNoteDuration" class="w-full sketch-border-sm bg-white p-2 font-semibold">
+            <option value="1">1 Hour</option>
+            <option value="2">2 Hours</option>
+            <option value="3">3 Hours</option>
+            <option value="4">4 Hours</option>
+          </select>
+        </div>
+
+        <div class="flex gap-2 mt-3">
+          <button type="button" id="saveEditBtn" class="flex-1 sketch-button bg-emerald-200 hover:bg-emerald-300 py-2 font-sketch font-bold">
+            Save
+          </button>
+          <button type="button" id="cancelEditBtn" class="flex-1 sketch-button bg-gray-200 hover:bg-gray-300 py-2 font-sketch font-bold">
+            Cancel
+          </button>
+        </div>
+        <button type="button" id="deleteNoteBtn" class="mt-2 w-full sketch-button bg-rose-100 hover:bg-rose-200 py-2 font-sketch font-bold text-rose-900">
+          Delete Note
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- Application logic -->
+  <script src="main.js"></script>
 </body>
 </html>
